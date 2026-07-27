@@ -1,5 +1,18 @@
+# Visual Studio
 .vs/
 **/.vs/
+
+# Build
 bin/
 obj/
+
+# Secrets / local config
+appsettings.json
+appsettings.Development.json
+
+# User-specific files
+*.csproj.user
+*.http
+
+# Frontend
 node_modules/
