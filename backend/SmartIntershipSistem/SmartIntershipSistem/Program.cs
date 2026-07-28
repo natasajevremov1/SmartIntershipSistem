@@ -1,6 +1,9 @@
 
 using SmartIntershipSistem.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace SmartIntershipSistem
 {
@@ -17,6 +20,19 @@ namespace SmartIntershipSistem
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtOptions =>
+                {
+                    jwtOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true, //proveri ko je izdao token
+                        ValidIssuer=builder.Configuration["JwtSettings:Issuer"], //validni izdavalan ce ovaj string konfiguracije
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
+                    };
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -31,6 +47,8 @@ namespace SmartIntershipSistem
             }
 
             app.UseHttpsRedirection();
+            //
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
