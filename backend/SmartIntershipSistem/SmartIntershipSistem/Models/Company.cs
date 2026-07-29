@@ -4,7 +4,7 @@ namespace SmartIntershipSistem.Models
 {
     public class Company
     {
-        [Key]
+        [Key] //ekspicitno dodato jer ef core automatski ne prepoznaje UserId kao primary key
         public Guid UserId { get; set; }
         public User User { get; set; }
         public string CompanyName {get; set; }

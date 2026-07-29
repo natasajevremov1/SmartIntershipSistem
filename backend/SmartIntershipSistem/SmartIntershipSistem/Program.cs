@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SmartIntershipSistem.Services;
 
 namespace SmartIntershipSistem
 {
@@ -19,6 +20,8 @@ namespace SmartIntershipSistem
             // registruj appDbContext da kad ga neko zatrazi kreiraj ga sa oovom konfiguracijom i daj mu
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            //registracija AuthService
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtOptions =>
@@ -26,7 +29,7 @@ namespace SmartIntershipSistem
                     jwtOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true, //proveri ko je izdao token
-                        ValidIssuer=builder.Configuration["JwtSettings:Issuer"], //validni izdavalan ce ovaj string konfiguracije
+                        ValidIssuer=builder.Configuration["JwtSettings:Issuer"], //validni izdavalac ce ovaj string konfiguracije
                         ValidateAudience = true,
                         ValidAudience = builder.Configuration["JwtSettings:Audience"],
                         ValidateIssuerSigningKey = true,
