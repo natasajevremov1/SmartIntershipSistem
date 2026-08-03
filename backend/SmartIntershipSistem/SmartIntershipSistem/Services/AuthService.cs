@@ -121,8 +121,7 @@ namespace SmartIntershipSistem.Services
                 {
                     new Claim(ClaimTypes.Role,user.Role.ToString()),
                     new Claim(ClaimTypes.Name,user.Name),
-                    new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Sub,user.Id.ToString())
-                }),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) }),
 
                 Expires=DateTime.UtcNow.AddDays(double.Parse(settings["ExpiryInDays"]!)),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
@@ -131,7 +130,9 @@ namespace SmartIntershipSistem.Services
 
             };
 
-            return new JsonWebTokenHandler().CreateToken(tokenDescriptor);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }
